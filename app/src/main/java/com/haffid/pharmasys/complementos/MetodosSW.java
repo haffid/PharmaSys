@@ -25,7 +25,7 @@ public class MetodosSW {
     public MetodosSW() {
     }
 
-    //Metodo de Insertar
+    //Metodo de Insertar cliente
     public void insertarSW(Context context, String nombre, String apellido, String direccion, String correo, String clave,
                            Response.Listener listener, Response.ErrorListener errorListener) {
         this.context = context;
@@ -77,6 +77,44 @@ public class MetodosSW {
             Toast.makeText(context, "ConflictoP " + e.getMessage(), Toast.LENGTH_LONG).show();
             System.err.println("C---- " + e.getCause() + " ---- " + e.getMessage());
         }
+    }
+
+    //Metodo consultar prducto
+    public void consultaCliente(Context context, Response.Listener listener, Response.ErrorListener errorListener){
+
+        this.context = context;
+        try {
+            String url;
+            url = IP_SERVER+"pharmasys/mostrar_cliente.php";
+            requestQueue = Volley.newRequestQueue(context);
+            jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, listener, errorListener);
+            requestQueue.add(jsonObjectRequest);
+
+        } catch (Exception e) {
+            Toast.makeText(context, "ConflictoP " + e.getMessage(), Toast.LENGTH_LONG).show();
+            System.err.println("C---- " + e.getCause() + " ---- " + e.getMessage());
+        }
+    }
+
+    //Metodo de Insertar Pedido
+    public void insertarPedido(Context context, String fechapedido, int idcliente, int idproducto, String descripcion, double preciopedido, int cantidadpedido, double totalpedido, int idestado,
+                           Response.Listener listener, Response.ErrorListener errorListener) {
+        this.context = context;
+        try {
+            String url;
+            url = IP_SERVER + "pharmasys/insertar_pedido.php?fecha_pedido="+fechapedido+"&fk_id_cliente="+idcliente+
+                    "&fk_id_producto_pedido="+idproducto+"&descripcion_pedido="+descripcion+
+                    "&precio_pedido="+preciopedido+"&cantidad_pedido="+cantidadpedido+
+                    "&total_pedido="+totalpedido+"&fk_id_estadop="+idestado;
+            requestQueue = Volley.newRequestQueue(context);
+            jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, listener, errorListener);
+            requestQueue.add(jsonObjectRequest);
+
+        } catch (Exception e) {
+            Toast.makeText(context, "ConflictoI " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            System.err.println("I---- " + e.getCause() + " ---- " + e.getMessage());
+        }
+
     }
 
 

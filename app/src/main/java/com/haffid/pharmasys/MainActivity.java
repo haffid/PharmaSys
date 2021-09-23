@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.haffid.pharmasys.complementos.ClienteVO;
 import com.haffid.pharmasys.complementos.MetodosSW;
 import com.haffid.pharmasys.complementos.ProductoVO;
 
@@ -45,18 +46,19 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
         //Pone el titulo de la toolabar en blanco, permitiendo que tome el titulo del toolbar
         getSupportActionBar().setTitle("");
 
+        //Muestra lista de productos
         listView = findViewById(R.id.lvProductos);
         metodosSW.consultaProducto(this,this,this);
 
+        //Al presionar sobre el producto de la lista, traslada la informacion al fragment_descripcion
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 trasladoInformacion(position);
             }
         });
-
-
     }
+    //Consulta de la BD de productos
     private void consulta(JSONObject response) {
         JSONArray jsonArray = response.optJSONArray("tbl_producto");
         listaProductoVO = new ArrayList<>();
@@ -69,10 +71,8 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
                 productoVO.setTipoProducto(jsonObject.optString("tipo_producto"));
                 productoVO.setDescripcionProducto(jsonObject.optString("descripcion_producto"));
                 productoVO.setPrecioProducto(jsonObject.optDouble("precio_producto"));
-
                 listaProductoVO.add(productoVO);
             }
-
             listaDatos = new ArrayList<>();
             for (int i=0;i < listaProductoVO.size(); i++){
                 //Muestra los datos que mostrara el listview en este caso Nombre del producto
@@ -80,12 +80,12 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
             }
             ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, listaDatos);
             listView.setAdapter(arrayAdapter);
-
         }catch (Exception e){
             Toast.makeText(this, "Error referente a P ", Toast.LENGTH_LONG).show();
             System.err.println("C----- "+e.getCause()+" ----- "+e.getMessage());
         }
     }
+
 
     @Override
     public void onResponse(JSONObject response) {
@@ -107,14 +107,12 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
         precioP = String.valueOf(listaProductoVO.get(position).getPrecioProducto());
 
         Intent intent = new Intent(getApplicationContext(), DescripcionProducto.class);
-        //intent.putExtra("id", idP);
+        intent.putExtra("id", idP);
         intent.putExtra("nombre", nombreP);
         intent.putExtra("tipo", tipoP);
         intent.putExtra("descripcion", descripcionP);
         intent.putExtra("precio", precioP);
         startActivity(intent);
-
     }
-
 
 }
