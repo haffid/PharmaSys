@@ -70,7 +70,7 @@ public class MainActivity2 extends AppCompatActivity implements Response.Listene
     }
 
     //Consulta de la BD de Clientes Android
-    private void resultadoConsulta(JSONObject response){
+/*    private void resultadoConsulta(JSONObject response){
         ClienteVO clienteVO = new ClienteVO();
         JSONArray jsonArray = response.optJSONArray("tbl_cliente_Android");
         try {
@@ -90,7 +90,7 @@ public class MainActivity2 extends AppCompatActivity implements Response.Listene
             System.err.println("B--- "+e.getCause()+" --- "+e.getMessage());
         }
 
-    }
+    }*/
 
     private void obtenerDatos(){
         Bundle bundle = getIntent().getExtras();
@@ -112,20 +112,20 @@ public class MainActivity2 extends AppCompatActivity implements Response.Listene
 
     //Metodo para calcular el total del pedido
     private void cambioCantidad(){
-            String preciop = textViewPreP.getText().toString();
-            String cantidadp = editTextCantidadP.getText().toString();
-            if(!cantidadp.isEmpty()) {
-                double resultadop = Double.parseDouble(cantidadp) * Double.parseDouble(preciop);
-                textViewTotalP.setText(String.valueOf(resultadop));
+        String preciop = textViewPreP.getText().toString();
+        String cantidadp = editTextCantidadP.getText().toString();
+        if(!cantidadp.isEmpty()) {
+            double resultadop = Double.parseDouble(cantidadp) * Double.parseDouble(preciop);
+            textViewTotalP.setText(String.valueOf(resultadop));
         }else{
-            Toast.makeText(this, "Debe de agregar por lo menos un prducto", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Debe de agregar por lo menos un producto", Toast.LENGTH_SHORT).show();
         }
     }
 
     //Metodo para poner la fecha actual al campo fecha del pedido
     public void fechaActual (){
         Date today = Calendar.getInstance().getTime();//getting date
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");//formating according to my need
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
         String date = formatter.format(today);
         textViewFechaP.setText(date);
     }
@@ -138,7 +138,7 @@ public class MainActivity2 extends AppCompatActivity implements Response.Listene
                     Integer.parseInt(editTextCantidadP.getText().toString()), Double.parseDouble(textViewTotalP.getText().toString()),
                     Integer.parseInt(textViewEstadoP.getText().toString()),this, this);
 
-            editTextCantidadP.setText("");
+            //editTextCantidadP.setText("");
 
 
         } else {
@@ -148,7 +148,7 @@ public class MainActivity2 extends AppCompatActivity implements Response.Listene
 
     @Override
     public void onResponse(JSONObject response) {
-        this.resultadoConsulta(response);
+        Toast.makeText(this, "Pedido enviado correctamente", Toast.LENGTH_SHORT).show();
     }
 
     @Override

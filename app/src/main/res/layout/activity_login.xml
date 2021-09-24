@@ -87,7 +87,7 @@
             android:backgroundTint="#2E9BFF"
             android:textColor="@color/white"
             android:textSize="20sp"
-            android:layout_marginTop="32sp"
+            android:layout_marginTop="25sp"
             android:padding="15sp"
             android:text="Ingresar"
             android:onClick="Login"

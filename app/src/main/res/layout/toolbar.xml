@@ -11,12 +11,35 @@
     android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
     app:popupTheme="@style/Theme.AppCompat.Light"
     >
-    <ImageView
-        android:layout_width="100sp"
-        android:layout_height="40sp"
-        android:src="@drawable/ic_logo"
+    <Button
+        android:id="@+id/btnHome"
+        android:layout_width="45sp"
+        android:layout_height="45sp"
+        android:background="@drawable/ic_home"
+        android:backgroundTint="@color/white"
         android:layout_gravity="left"
+        android:onClick="home"
         />
+    <Button
+        android:id="@+id/btnSalir"
+        android:layout_width="45sp"
+        android:layout_height="45sp"
+        android:background="@drawable/ic_logout"
+        android:backgroundTint="@color/white"
+        android:layout_marginRight="10sp"
+        android:layout_gravity="right"
+        android:onClick="salir"
+        />
+    <TextView
+        android:id="@+id/txtUser"
+        android:layout_width="wrap_content"
+        android:layout_height="40sp"
+        android:layout_gravity="right"
+        android:text="."
+
+
+        />
+
 
 
 </androidx.appcompat.widget.Toolbar>

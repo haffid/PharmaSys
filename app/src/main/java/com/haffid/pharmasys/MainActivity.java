@@ -3,7 +3,9 @@ package com.haffid.pharmasys;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -13,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Response;
@@ -26,19 +29,36 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements Response.Listener<JSONObject>, Response.ErrorListener{
+public class MainActivity extends AppCompatActivity implements Response.Listener<JSONObject>, Response.ErrorListener {
     //Toolbar
     private Toolbar toolbar;
+    SearchView searchView;
     ListView listView;
     ArrayList<String> listaDatos;
     ArrayList<ProductoVO> listaProductoVO;
     MetodosSW metodosSW = new MetodosSW();
 
+    //cerrar sesion
+    TextView textViewUser;
+    SharedPreferences preferences;
+    String keypref = "pref";
+    String keycorreo = "correo";
+    String keyclave = "clave";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //Cerrar sesion
+        textViewUser = findViewById(R.id.txtUser);
+
+        preferences = getApplicationContext().getSharedPreferences(keypref, Context.MODE_PRIVATE);
+        String name = preferences.getString(keycorreo, null);
+
+        if (name != null){
+            textViewUser.setText(" "+name);
+        }
 
         //Toolbar
         toolbar = findViewById(R.id.toolbar);
@@ -48,7 +68,9 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
 
         //Muestra lista de productos
         listView = findViewById(R.id.lvProductos);
-        metodosSW.consultaProducto(this,this,this);
+        //Barra de busqueda de productos
+        searchView = findViewById(R.id.buscarProducto);
+        metodosSW.consultaProducto(this, this, this);
 
         //Al presionar sobre el producto de la lista, traslada la informacion al fragment_descripcion
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -58,12 +80,13 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
             }
         });
     }
+
     //Consulta de la BD de productos
     private void consulta(JSONObject response) {
         JSONArray jsonArray = response.optJSONArray("tbl_producto");
         listaProductoVO = new ArrayList<>();
         try {
-            for (int i=0;i < jsonArray.length(); i++){
+            for (int i = 0; i < jsonArray.length(); i++) {
                 ProductoVO productoVO = new ProductoVO();
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 productoVO.setIdProducto(jsonObject.optInt("id_producto"));
@@ -74,16 +97,32 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
                 listaProductoVO.add(productoVO);
             }
             listaDatos = new ArrayList<>();
-            for (int i=0;i < listaProductoVO.size(); i++){
+            for (int i = 0; i < listaProductoVO.size(); i++) {
                 //Muestra los datos que mostrara el listview en este caso Nombre del producto
                 listaDatos.add(listaProductoVO.get(i).getNombreProducto());
             }
             ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, listaDatos);
             listView.setAdapter(arrayAdapter);
-        }catch (Exception e){
+
+
+            //Realiza una busqueda en la lista de productos por medio de la barra de busqueda y muesra el resultado en la lista
+            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String query) {
+                    return false;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String newText) {
+                    arrayAdapter.getFilter().filter(newText);
+                    return false;
+                }
+            });
+        } catch (Exception e) {
             Toast.makeText(this, "Error referente a P ", Toast.LENGTH_LONG).show();
-            System.err.println("C----- "+e.getCause()+" ----- "+e.getMessage());
+            System.err.println("C----- " + e.getCause() + " ----- " + e.getMessage());
         }
+
     }
 
 
@@ -95,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
     @Override
     public void onErrorResponse(VolleyError error) {
         Toast.makeText(this, "Error referente a ConsultaProducto " + error, Toast.LENGTH_LONG).show();
-        System.err.println("C **** "+error);
+        System.err.println("C **** " + error);
     }
 
     private void trasladoInformacion(int position) {
@@ -115,4 +154,16 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
         startActivity(intent);
     }
 
+    public void salir(View view) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.clear();
+        editor.commit();
+        Toast.makeText(this, "Sesión cerrada", Toast.LENGTH_SHORT).show();
+        startActivity(new Intent(getApplicationContext(),Login.class));
+        finish();
+    }
+
+    public void home(View view) {
+        startActivity(new Intent(getApplicationContext(),MainActivity.class));
+    }
 }

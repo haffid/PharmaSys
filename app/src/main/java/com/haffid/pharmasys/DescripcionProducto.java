@@ -1,6 +1,7 @@
 package com.haffid.pharmasys;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import android.content.Intent;
@@ -11,10 +12,12 @@ public class DescripcionProducto extends AppCompatActivity {
     private Fragment fragment;
     private String id, nombre, tipo, descripcion, precio;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_descripcion_producto);
+
 
         //Fragmento del producto
         fragment = new fragment_descripcion();

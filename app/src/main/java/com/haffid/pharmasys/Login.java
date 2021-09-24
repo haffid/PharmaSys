@@ -2,9 +2,12 @@ package com.haffid.pharmasys;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -19,15 +22,31 @@ import org.json.JSONObject;
 public class Login extends AppCompatActivity implements Response.Listener<JSONObject>, Response.ErrorListener{
     EditText editTextCorreoL, editTextClaveL;
     MetodosSW metodosSW = new MetodosSW();
+    //Guardar sesion
+    SharedPreferences preferences;
+
+     String keypref = "pref";
+     String keycorreo = "correo";
+     String keyclave = "clave";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+
         editTextCorreoL = findViewById(R.id.edtCorreoL);
         editTextClaveL = findViewById(R.id.edtClaveL);
+
+        //Guardar sesion
+        preferences = getSharedPreferences(keypref, Context.MODE_PRIVATE);
+        String name = preferences.getString(keycorreo, null);
+        if (name != null){
+            startActivity(new Intent(getApplicationContext(),MainActivity.class));
+            finish();
+        }
     }
+
 
     public void Registrar(View view) {
         startActivity(new Intent(getApplicationContext(),Registrar.class));
@@ -36,6 +55,7 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
 
     public void Login(View view) {
         this.login();
+
     }
 
     private void login() {
@@ -59,11 +79,19 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
 
             String dato = clienteVO.getCorreoCliente();
             if (!dato.equals("...")) {
+                //guardar sesion
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putString(keycorreo,editTextCorreoL.getText().toString());
+                editor.putString(keyclave,editTextClaveL.getText().toString());
+                editor.commit();
                 startActivity(new Intent(getApplicationContext(),MainActivity.class));
                 finish();
                 Toast.makeText(this, "Ingreso con exito", Toast.LENGTH_SHORT).show();
             }else{
                 Toast.makeText(this, "Usuario o Contraseña incorrectos", Toast.LENGTH_LONG).show();
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.clear();
+                editor.commit();
 
             }
 
